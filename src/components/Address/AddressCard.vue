@@ -116,7 +116,7 @@ export default {
       return this.user.location
     },
     iconSrc () {
-      return `http://openweathermap.org/img/w/${this.address.weather.icon}.png`
+      return `https://openweathermap.org/img/w/${this.address.weather.icon}.png`
     },
     mapRouteSrc () {
       const userLocation = this.userLocation
