@@ -2,6 +2,8 @@
 
 > A simple CRUD of addresses
 
+[Production Version](https://lucastoque.com/address-module)
+
 ## Build Setup
 
 ``` bash
