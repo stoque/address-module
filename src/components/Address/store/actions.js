@@ -12,6 +12,7 @@ const setAddressInfo = async ({ commit }, obj) => {
 
 const setAddress = async ({ commit }, address) => {
   await setLatLon(address)
+  await setWeather(address)
   commit('SET_ADDRESS', address)
 }
 
@@ -24,6 +25,7 @@ const removeAddress = ({ commit }, index) => {
 const changeAddress = async ({ commit }, obj) => {
   const address = obj.newInfos
   await setLatLon(address)
+  await setWeather(address)
   commit('CHANGE_ADDRESS', obj)
 }
 
@@ -36,6 +38,18 @@ const setLatLon = async (address) => {
   const position = await getLanLon(fullAddress)
   address.latitude = position.lat
   address.longitude = position.lon
+}
+
+const setWeather = async (address) => {
+  const apiKey = '6fa0ae0ea5cef215d411b2adc5db0af2'
+  const apiUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${address.latitude}&lon=${address.longitude}&APPID=${apiKey}`
+  const data = (await axios.get(apiUrl)).data
+  const temp = data.main.temp - 273
+  const icon = data.weather[0].icon
+  address.weather = {
+    temp,
+    icon
+  }
 }
 
 export default {

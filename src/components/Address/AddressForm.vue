@@ -22,36 +22,36 @@
           <p class="neighborhood">{{ addressInfo.neighborhood }},</p>
           <p class="city">{{ addressInfo.city }} - {{ addressInfo.state }}</p>
         </div>
-
-        <div class="form-group">
-          <label for="number">Número:</label>
-          <input
-            class="form-control"
-            :class="{'is-invalid': $v.number.$error, 'is-valid': !$v.number.$error && $v.number.$dirty}"
-            id="number"
-            @keydown="$v.number.$touch()"
-            type="text"
-            v-model="number"
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="complement">Complemento:</label>
-          <input
-            class="form-control"
-            id="complement"
-            type="text"
-            v-model="complement"
-          >
-        </div>
-
-        <button
-          class="btn btn-primary btn-block"
-          :disabled="!isFormValid"
-        >
-          Cadastrar
-        </button>
       </div>
+
+      <div class="form-group">
+        <label for="number">Número:</label>
+        <input
+          class="form-control"
+          :class="{'is-invalid': $v.number.$error, 'is-valid': !$v.number.$error && $v.number.$dirty}"
+          id="number"
+          @keydown="$v.number.$touch()"
+          type="text"
+          v-model="number"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="complement">Complemento:</label>
+        <input
+          class="form-control"
+          id="complement"
+          type="text"
+          v-model="complement"
+        >
+      </div>
+
+      <button
+        class="btn btn-primary btn-block"
+        :disabled="!isFormValid"
+      >
+        Cadastrar
+      </button>
     </form>
   </div>
 </template>
@@ -97,7 +97,7 @@ export default {
   methods: {
     ...mapActions('Address', ['setAddressInfo', 'setAddress']),
     getAddressInfo () {
-      if (this.$v.zipcode) {
+      if (!this.$v.zipcode.$invalid) {
         this.setAddressInfo({ zipcode: this.cleanZipcode })
       }
     },
@@ -123,8 +123,11 @@ export default {
 <style lang="sass" scoped>
 
 .address-form
+  background: #fff
+  border-radius: 4px
   margin: 0 auto 20px auto
   max-width: 600px
+  padding: 20px
 
   @media ('min-width: 1024px')
     width: 400px

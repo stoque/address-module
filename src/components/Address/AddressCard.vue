@@ -1,15 +1,30 @@
 <template>
   <div>
     <div class="address-card">
-      <p class="street">{{ address.street }}, {{  address.number  }} {{ address.complement }}</p>
-      <p class="neighborhood">{{ address.neighborhood }}</p>
-      <p class="city">{{ address.city }} - {{ address.state }}</p>
-      <p class="distance">Aprox. {{ formatedDistance }} de distância</p>
+      <div class="info-wrapper">
+        <p class="street">{{ address.street }}, {{  address.number  }} {{ address.complement }}</p>
+        <p class="neighborhood">{{ address.neighborhood }}</p>
+        <p class="city">{{ address.city }} - {{ address.state }}</p>
+      </div>
+
+      <div class="distance-wrapper">
+        <p class="text">Aprox. {{ formatedDistance }} de distância</p>
+        <a class="link" :href="mapRouteSrc" target="_blank">Clique para abrir a rota</a>
+      </div>
+
+      <div class="weather-wrapper">
+        <p class="title">Temperatura:</p>
+        <p class="temp">{{ formatedTemp }}</p>
+        <img class="icon" :src="iconSrc">
+        {{ user.latitude }} {{ user.longitude }}
+      </div>
+
       <div class="actions-wrapper">
         <button class="btn btn-primary" @click="edit = edit ? false : true">Alterar</button>
         <button class="btn btn-danger" @click="remove">Remover</button>
       </div>
     </div>
+
     <transition name="fade">
       <form @submit.prevent="change" v-if="edit" class="form-edit">
         <h4>Alteração de endereço</h4>
@@ -80,6 +95,10 @@ export default {
         neighborhood: this.address.neighborhood,
         city: this.address.city
       },
+      position: {
+        latitude: this.address.latitude,
+        longitude: this.address.longitude
+      },
       distance: null
     }
   },
@@ -88,6 +107,22 @@ export default {
     formatedDistance () {
       const distance = this.distance
       return distance ? distance.toFixed() + ' km' : ''
+    },
+    formatedTemp () {
+      const temp = this.address.weather.temp.toFixed(1)
+      return `${temp} °С`
+    },
+    userLocation () {
+      return this.user.location
+    },
+    iconSrc () {
+      return `http://openweathermap.org/img/w/${this.address.weather.icon}.png`
+    },
+    mapRouteSrc () {
+      const userLocation = this.userLocation
+      const lat = this.address.latitude
+      const lon = this.address.longitude
+      return `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${lat},${lon}&travelmode=driving`
     }
   },
   props: ['address', 'index'],
@@ -106,9 +141,8 @@ export default {
       this.edit = false
     },
     calculeDistance () {
-      const userPosition = this.user.location
       const address = this.address
-      this.distance = getDistance(address.latitude, address.longitude, userPosition.latitude, userPosition.longitude)
+      this.distance = getDistance(address.latitude, address.longitude, this.userLocation.latitude, this.userLocation.longitude)
     }
   }
 }
@@ -123,8 +157,33 @@ export default {
   padding: 20px
 
 .address-card
+  border-radius: 4px 4px 0 0
+
+.form-edit
+  border-radius: 0 0 4px 4px
+
+.address-card
   padding: 20px
   transition: box-shadow 0.4s ease-in-out, border-left 0.1s
+
+  > .info-wrapper
+    margin: 0 0 10px 0
+
+    > .street
+      font-size: 20px
+      font-weight: bold
+
+  > .distance-wrapper
+    > .link
+      color: #3498db
+      text-decoration: underline
+
+  > .weather-wrapper
+    display: flex
+    align-items: center
+
+    > .title
+      margin: 0 10px 0 0
 
   > .actions-wrapper
     margin: 10px 0 0

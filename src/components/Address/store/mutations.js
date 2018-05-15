@@ -18,13 +18,11 @@ const REMOVE_ADDRESS = (state, index) => {
 }
 
 const CHANGE_ADDRESS = (state, obj) => {
-  obj.address.street = obj.newInfos.street
-  obj.address.neighborhood = obj.newInfos.neighborhood
-  obj.address.number = obj.newInfos.number
-  obj.address.complement = obj.newInfos.complement
-  obj.address.city = obj.newInfos.city
-  obj.address.latitude = obj.newInfos.latitude
-  obj.address.longitude = obj.newInfos.longitude
+  const newAddress = obj.newInfos
+  const address = obj.address
+  for (const prop in newAddress) {
+    address[prop] = newAddress[prop]
+  }
 }
 
 const SET_USER_LOCATION = (state, position) => {
