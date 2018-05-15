@@ -1,7 +1,6 @@
 <template>
   <div class="address">
     <h1 class="title">Address Register</h1>
-
     <div class="content">
       <address-form/>
       <address-list/>
@@ -12,11 +11,25 @@
 <script>
 import AddressForm from './AddressForm'
 import AddressList from './AddressList'
+import getGeolocation from '@/helpers/geolocation'
+import { mapActions } from 'vuex'
 
 export default {
+  mounted () {
+    this.loadPosition()
+  },
   components: {
     AddressForm,
     AddressList
+  },
+  methods: {
+    ...mapActions('Address', ['setUserLocation']),
+    async loadPosition () {
+      const position = await getGeolocation()
+      const { latitude, longitude } = position.coords
+      const latlon = { latitude, longitude }
+      this.setUserLocation(latlon)
+    }
   }
 }
 </script>

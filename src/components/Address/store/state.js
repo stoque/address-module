@@ -1,4 +1,5 @@
 export default {
   addressInfo: {},
-  addressList: []
+  addressList: [],
+  user: {}
 }

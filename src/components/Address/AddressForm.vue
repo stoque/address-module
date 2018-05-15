@@ -5,7 +5,7 @@
         <label for="zipcode">CEP:</label>
         <input
           class="form-control"
-          :class="{'is-invalid': $v.zipcode.$dirty && !addressInfo.street, 'is-valid': $v.zipcode.$dirty && addressInfo.street}"
+          :class="zipcodeInputClass"
           id="zipcode"
           @keydown="$v.zipcode.$touch()"
           @keyup="getAddressInfo()"
@@ -70,15 +70,19 @@ export default {
   },
   computed: {
     ...mapState('Address', ['addressInfo']),
-    isZipCodeValid () {
-      const zipcode = this.$v.zipcode
-      return !zipcode.$invalid
-    },
     isFormValid () {
       return !this.$v.$invalid
     },
     cleanZipcode () {
       return this.zipcode.replace(/[.-]/g, '')
+    },
+    zipcodeInputClass () {
+      const form = this.$v
+      if (form.zipcode.$dirty && (form.zipcode.$invalid || !this.addressInfo.street)) {
+        return 'is-invalid'
+      } else if (form.zipcode.$dirty) {
+        return 'is-valid'
+      }
     }
   },
   validations: {
@@ -93,7 +97,7 @@ export default {
   methods: {
     ...mapActions('Address', ['setAddressInfo', 'setAddress']),
     getAddressInfo () {
-      if (this.isZipCodeValid) {
+      if (this.$v.zipcode) {
         this.setAddressInfo({ zipcode: this.cleanZipcode })
       }
     },
@@ -107,6 +111,7 @@ export default {
     },
     clearForm () {
       this.zipcode = ''
+      this.street = ''
       this.number = ''
       this.complement = ''
       this.$v.$reset()

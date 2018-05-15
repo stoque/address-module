@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { getLanLon } from '@/helpers/distance'
 
 const setAddressInfo = async ({ commit }, obj) => {
   const zipcode = obj.zipcode
@@ -9,8 +10,8 @@ const setAddressInfo = async ({ commit }, obj) => {
   })
 }
 
-const setAddress = ({ commit }, obj) => {
-  const address = obj
+const setAddress = async ({ commit }, address) => {
+  await setLatLon(address)
   commit('SET_ADDRESS', address)
 }
 
@@ -20,13 +21,27 @@ const removeAddress = ({ commit }, index) => {
   }
 }
 
-const changeAddress = ({ commit }, obj) => {
+const changeAddress = async ({ commit }, obj) => {
+  const address = obj.newInfos
+  await setLatLon(address)
   commit('CHANGE_ADDRESS', obj)
+}
+
+const setUserLocation = ({ commit }, latlon) => {
+  commit('SET_USER_LOCATION', latlon)
+}
+
+const setLatLon = async (address) => {
+  const fullAddress = `${address.street} ${address.number} ${address.city}`
+  const position = await getLanLon(fullAddress)
+  address.latitude = position.lat
+  address.longitude = position.lon
 }
 
 export default {
   setAddressInfo,
   setAddress,
   removeAddress,
-  changeAddress
+  changeAddress,
+  setUserLocation
 }

@@ -4,7 +4,7 @@
       <p class="street">{{ address.street }}, {{  address.number  }} {{ address.complement }}</p>
       <p class="neighborhood">{{ address.neighborhood }}</p>
       <p class="city">{{ address.city }} - {{ address.state }}</p>
-
+      <p class="distance">Aprox. {{ formatedDistance }} de distância</p>
       <div class="actions-wrapper">
         <button class="btn btn-primary" @click="edit = edit ? false : true">Alterar</button>
         <button class="btn btn-danger" @click="remove">Remover</button>
@@ -61,8 +61,15 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { getDistance } from '@/helpers/distance'
 
 export default {
+  created () {
+    this.calculeDistance()
+  },
+  updated () {
+    this.calculeDistance()
+  },
   data () {
     return {
       edit: false,
@@ -72,16 +79,20 @@ export default {
         complement: this.address.complement,
         neighborhood: this.address.neighborhood,
         city: this.address.city
-      }
+      },
+      distance: null
     }
   },
   computed: {
-    ...mapState('Address', ['addressList'])
+    ...mapState('Address', ['user']),
+    formatedDistance () {
+      const distance = this.distance
+      return distance ? distance.toFixed() + ' km' : ''
+    }
   },
   props: ['address', 'index'],
   methods: {
     ...mapActions('Address', [
-      'setAddressInfo',
       'removeAddress',
       'changeAddress'
     ]),
@@ -93,6 +104,11 @@ export default {
       const newInfos = this.newInfos
       this.changeAddress({address, newInfos})
       this.edit = false
+    },
+    calculeDistance () {
+      const userPosition = this.user.location
+      const address = this.address
+      this.distance = getDistance(address.latitude, address.longitude, userPosition.latitude, userPosition.longitude)
     }
   }
 }
