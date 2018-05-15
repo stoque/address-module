@@ -42,7 +42,7 @@ const setLatLon = async (address) => {
 
 const setWeather = async (address) => {
   const apiKey = '6fa0ae0ea5cef215d411b2adc5db0af2'
-  const apiUrl = `http://api.openweathermap.org/data/2.5/weather?lat=${address.latitude}&lon=${address.longitude}&APPID=${apiKey}`
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${address.latitude}&lon=${address.longitude}&APPID=${apiKey}`
   const data = (await axios.get(apiUrl)).data
   const temp = data.main.temp - 273
   const icon = data.weather[0].icon
